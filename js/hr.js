@@ -79,7 +79,7 @@
   function handleImportText(txt) {
     txt = String(txt || '').trim(); if (!txt) return;
     try {
-      if (txt[0] === '{' || txt[0] === '[') { const o = JSON.parse(txt); PS.importCards(Array.isArray(o) ? { cards: o } : o); return; }
+      if (txt[0] === '{' || txt[0] === '[') { const o = JSON.parse(txt); if (o && o.type === 'putrispace-card-images') { PS.importImages(o); return; } PS.importCards(Array.isArray(o) ? { cards: o } : o); return; }
       const cards = parseBlock(txt); if (!cards.length) throw new Error('empty'); PS.importCards({ cards });
     } catch (e) { PS.toast(t('badFile')); }
   }
@@ -103,6 +103,7 @@
       <article class="read-mode stack" style="gap:16px;padding:4px 2px">
         ${c.subtitle ? `<div style="font-style:italic;color:#6B6585">${esc(c.subtitle)}</div>` : ''}
         ${sec('#4B3DB0', '📌 Key idea', `<p style="margin:0">${esc(c.key)}</p>`)}
+        <figure id="cardVis" style="margin:0;display:none"></figure>
         ${sec('#9A4A22', c.tip ? '🧭 When to use it' : '🔑 Key points', (c.points || []).length ? `<ul style="margin:0;padding-left:20px">${c.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : '')}
         ${sec('#1F6E55', c.tip ? '📖 Real-life example' : '💡 In practice', c.practice ? `<p style="margin:0">${esc(c.practice)}</p>` : '')}
         ${sec('#6B4E00', '✨ Pro tip', c.tip ? `<p style="margin:0">${esc(c.tip)}</p>` : '')}
@@ -114,6 +115,16 @@
       <div class="row"><button class="btn ${known(id) ? 'mint' : ''}" style="flex:1" data-act="toggleKnown" data-id="${id}">${known(id) ? '✓ ' + esc(t('understood')) : esc(t('markUnderstood'))}</button><button class="btn soft" data-act="askCard" data-id="${id}">${icon('spark', 20)}${esc(t('askAI'))}</button></div>
       <div class="row"><a class="btn ghost sm" style="flex:1;${i > 0 ? '' : 'visibility:hidden'}" href="#hr/card/${i > 0 ? sib[i - 1].id : ''}">‹ ${esc(t('prev'))}</a><span class="small">${i + 1}/${sib.length}</span><a class="btn ghost sm" style="flex:1;${i < sib.length - 1 ? '' : 'visibility:hidden'}" href="#hr/card/${i < sib.length - 1 ? sib[i + 1].id : ''}">${esc(t('next'))} ›</a></div></div>`;
   }
+  V.hr_after = async (p) => {
+    if (p[0] !== 'card') return;
+    const box = document.getElementById('cardVis'); if (!box) return;
+    const src = await PS.img.get(p[1]); if (!src || !document.body.contains(box)) return;
+    const c = S().hrCards.find((x) => x.id === p[1]) || {};
+    box.style.display = 'block';
+    box.innerHTML = `<div class="sec-t" style="color:#2B5C99">🗺 Visual</div><button data-act="zoomImg" data-id="${esc(p[1])}" style="border:none;padding:0;background:none;width:100%;cursor:zoom-in" aria-label="${esc(t('enlarge'))}"><img src="${src}" alt="${esc(c.title || '')}" style="width:100%;display:block;border-radius:14px;border:1px solid #ECE7FA;background:#fff"></button><div class="small" style="font-family:Nunito,sans-serif;margin-top:4px">${esc(t('tapToEnlarge'))}</div>`;
+  };
+  A.zoomImg = async (el) => { const src = await PS.img.get(el.dataset.id); if (src) PS.sheet(`<div style="overflow:auto;-webkit-overflow-scrolling:touch;max-height:75vh"><img src="${src}" alt="" style="width:200%;max-width:none;display:block"></div><span class="small">${esc(t('scrollToSee'))}</span><button class="btn soft" data-act="closeSheet">${esc(t('close'))}</button>`); };
+  A.closeSheet = () => PS.sheet(null);
   PS.inputs.cardNote = (el) => { hrs(el.dataset.id).note = el.value; clearTimeout(PS._nt); PS._nt = setTimeout(() => PS.save(), 800); };
   A.toggleKnown = (el) => { const st = hrs(el.dataset.id); st.known = !st.known; PS.save(); PS.render(); };
   A.cardListen = (el) => { const c = S().hrCards.find((x) => x.id === el.dataset.id); if (!c) return; PS.speak([c.title + '.', c.key, ...(c.points || []), c.practice ? 'In practice: ' + c.practice : '', c.critique ? 'Critique: ' + c.critique : '', c.tip ? 'Pro tip: ' + c.tip : ''].filter(Boolean).join(' ')); };

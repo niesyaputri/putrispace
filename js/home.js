@@ -319,6 +319,7 @@
       try {
         const obj = JSON.parse(txt);
         if (obj.type === 'putrispace-hr-cards') { PS.importCards(obj); return; }
+        if (obj.type === 'putrispace-card-images') { PS.importImages(obj); return; }
         if (!obj.profile) throw new Error('bad');
         if (!confirm(t('confirmRestore'))) return;
         const keepPin = S().pinHash; PS.replaceState(obj); PS.S().pinHash = keepPin; PS.save(); PS.render(); PS.toast(t('restored'));

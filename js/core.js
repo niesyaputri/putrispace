@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const C = window.PS_CONTENT;
-  const VERSION = '1.1.2';
+  const VERSION = '1.1.3';
   const KEY = 'putrispace.v1';
   const CONN_KEY = 'putrispace.conn';
   const PS = (window.PS = { VERSION, C, views: {}, acts: {}, inputs: {} });
@@ -95,6 +95,23 @@
     a.href = URL.createObjectURL(new Blob([text], { type }));
     a.download = name; document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  };
+
+  /* ---------- card images (IndexedDB, stays on this phone, not synced) ---------- */
+  let _db = null;
+  const idb = () => _db || (_db = new Promise((res, rej) => {
+    const r = indexedDB.open('putrispace-img', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('img');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  }));
+  PS.img = {
+    put: async (map) => { const db = await idb(); const ids = Object.keys(map || {}); await new Promise((res, rej) => { const tx = db.transaction('img', 'readwrite'); ids.forEach((id) => tx.objectStore('img').put(map[id], id)); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); return ids.length; },
+    get: async (id) => { try { const db = await idb(); return await new Promise((res) => { const q = db.transaction('img').objectStore('img').get(id); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); }); } catch (e) { return null; } },
+    count: async () => { try { const db = await idb(); return await new Promise((res) => { const q = db.transaction('img').objectStore('img').count(); q.onsuccess = () => res(q.result); q.onerror = () => res(0); }); } catch (e) { return 0; } }
+  };
+  PS.importImages = async function (obj) {
+    try { const n = await PS.img.put(obj.images); PS.toast(t('imagesImported', { n }), 3500); PS.sheet(null); PS.render(); }
+    catch (e) { PS.toast(t('imagesFailed'), 4000); }
   };
 
   /* ---------- IELTS rounding ---------- */
