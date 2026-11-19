@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const C = window.PS_CONTENT;
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.1';
   const KEY = 'putrispace.v1';
   const CONN_KEY = 'putrispace.conn';
   const PS = (window.PS = { VERSION, C, views: {}, acts: {}, inputs: {} });
@@ -143,14 +143,35 @@
     S.usage.usd += (u.input || 0) * 0.10 / 1e6 + (u.output || 0) * 0.50 / 1e6;
     PS.save();
     if (!json) return r.text;
-    return PS.parseJSON(r.text);
+    return PS.parseJSON(r.text, r.stop);
   };
-  PS.parseJSON = function (text) {
-    let s = String(text || '').trim().replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
-    try { return JSON.parse(s); } catch (e) { /* fall through */ }
+  // Escapes raw line breaks/tabs inside JSON strings and drops trailing commas (common in long AI replies)
+  const repairJSON = function (s) {
+    let out = '', inStr = false, esc = false;
+    for (let i = 0; i < s.length; i++) {
+      const c = s[i];
+      if (inStr) {
+        if (esc) { out += c; esc = false; continue; }
+        if (c === '\\') { out += c; esc = true; continue; }
+        if (c === '"') { inStr = false; out += c; continue; }
+        if (c === '\n') { out += '\\n'; continue; }
+        if (c === '\r') continue;
+        if (c === '\t') { out += '\\t'; continue; }
+        out += c;
+      } else { if (c === '"') inStr = true; out += c; }
+    }
+    return out.replace(/,\s*([}\]])/g, '$1');
+  };
+  PS.parseJSON = function (text, stop) {
+    let s = String(text || '').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
     const a = s.indexOf('{'), b = s.lastIndexOf('}');
-    if (a >= 0 && b > a) { try { return JSON.parse(s.slice(a, b + 1)); } catch (e) { /* fall through */ } }
-    throw new Error(t('aiBadFormat'));
+    const tries = [s];
+    if (a >= 0 && b > a) tries.push(s.slice(a, b + 1));
+    for (const x of tries) {
+      try { return JSON.parse(x); } catch (e) { /* next */ }
+      try { return JSON.parse(repairJSON(x)); } catch (e) { /* next */ }
+    }
+    throw new Error(stop === 'max_tokens' ? t('aiTooLong') : t('aiBadFormat'));
   };
   PS.langName = () => (S.lang === 'en' ? 'English' : 'Bahasa Indonesia');
 

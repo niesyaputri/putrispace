@@ -54,12 +54,12 @@
     const qs = s.hrQuiz.slice(0, 10), avg = qs.length ? Math.round(qs.reduce((a, b) => a + b.pct, 0) / qs.length) : null;
     const last = s.lastCard && all.find((c) => c.id === s.lastCard);
     const head = `<div class="top"><div class="grow"><div class="eyebrow">HR Learning</div><h1 class="h1">${esc(t('hrTitle', { goal: s.profile.goal || 'Direktur SDM' }))}</h1></div></div>`;
-    if (!all.length) return `<div class="page">${head}<div class="card" style="align-items:center;text-align:center">${PS.owl(false, 80)}<b style="font-size:16px">${esc(t('hrEmpty'))}</b><span class="small">${esc(t('hrEmptySub'))}</span><button class="btn" data-act="importCards">${icon('import', 22)}${esc(t('importCards'))}</button></div>${groupsHtml()}</div>`;
+    if (!all.length) return `<div class="page">${head}<div class="card" style="align-items:center;text-align:center">${PS.owl(false, 80)}<b style="font-size:16px">${esc(t('hrEmpty'))}</b><span class="small">${esc(t('hrEmptySub'))}</span><button class="btn" data-act="importCards">${icon('importW', 22)}${esc(t('importCards'))}</button></div>${groupsHtml()}</div>`;
     return `<div class="page">${head}
       ${last ? `<a class="hero" href="#hr/card/${last.id}" style="background:#5BBF97;text-decoration:none"><div class="stack grow" style="gap:4px"><span style="font-size:12px;font-weight:800">${esc(t('continueLearning'))}</span><span class="big" style="font-size:18px;text-shadow:0 1px 0 rgba(0,0,0,.12)">${esc(last.title)}</span><span style="font-size:12px;font-weight:700">${esc(TNAME(last.topic))}${last.page ? ' · ' + esc(t('pageN', { n: last.page })) : ''}</span></div>${PS.owl(true, 60)}</a>` : ''}
       <div class="grid3"><div class="stat"><b style="color:#4B3DB0">${all.length}</b><span>${esc(t('cards'))}</span></div><div class="stat"><b style="color:#1F6E55">${kn}</b><span>${esc(t('understood'))}</span></div><div class="stat"><b style="color:#9A4A22">${avg == null ? '–' : avg + '%'}</b><span>${esc(t('quizScore'))}</span></div></div>
       ${groupsHtml()}
-      <div class="row"><button class="btn" style="flex:1" data-act="importCards">${icon('import', 20)}${esc(t('importCards'))}</button><a class="btn mint" style="flex:1" href="#hr/quiz/all">${icon('quiz', 20)}${esc(t('randomQuiz'))}</a></div>
+      <div class="row"><button class="btn" style="flex:1" data-act="importCards">${icon('importW', 20)}${esc(t('importCards'))}</button><a class="btn mint" style="flex:1" href="#hr/quiz/all">${icon('quiz', 20)}${esc(t('randomQuiz'))}</a></div>
       <span class="small center">${esc(t('readPdfSoon'))}</span></div>`;
   };
   function groupsHtml() {

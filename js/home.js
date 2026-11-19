@@ -106,6 +106,7 @@
         <span class="ic sm" style="background:${x.done ? '#DDF4EA' : '#F3F0FF'}">${x.done ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#5BBF97"/><path d="M7.5 12.5l3 3 6-6.5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#C9C0F2" stroke-width="2.4"/></svg>'}</span>
         <span class="stack grow" style="gap:0"><span class="t" style="${x.done ? 'text-decoration:line-through;color:#6B6585' : ''}">${esc(t(x.key))}</span><span class="s">${esc(x.sub)}</span></span></a>`).join('')}</section>
 
+      <section class="card" id="agendaCard">${agendaHtml()}</section>
       <section class="card">
         <div class="between"><h2 class="h2">${icon('calendar', 26)}${esc(t('deadlines'))}</h2><a class="pill" style="background:#EEEAFE;color:#4B3DB0;text-decoration:none" href="#deadlines">${esc(t('edit'))}</a></div>
         ${dl.length ? `<div class="grid2">${dl.map((d) => { const c = COLORS[d.color] || COLORS.lav, n = daysUntil(d.date); return `<div style="background:${c[0]};border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:4px">${icon(c[2], 32)}<span style="font-size:22px;font-weight:800;color:${c[1]}">${n === 0 ? esc(t('today')) : esc(t('daysLeft', { n }))}</span><span style="font-size:12px;font-weight:700;color:${c[1]}">${esc(d.title)} · ${esc(PS.fmtDate(d.date))}</span></div>`; }).join('')}</div>` : `<div class="empty">${esc(t('noDeadlines'))}</div>`}
@@ -115,9 +116,44 @@
           <span style="font-size:12px;font-weight:700;color:#6B4E00">${cpe.done >= cpe.need ? esc(t('cpeDone')) : esc(t('cpeNeed', { n: cpe.need - cpe.done }))}</span></div>
       </section>
 
-      <a class="tile h" href="https://niesyaputri.github.io/agendaku/" target="_blank" rel="noopener">${ic('link', '#E0EEFF')}<span class="stack grow" style="gap:0"><span class="t">${esc(t('openAgendaKu'))}</span><span class="s">${esc(t('openAgendaKuSub'))}</span></span></a>
       <p class="foot">Putri Space v${PS.VERSION} · Created by CreanovativeCo</p>
     </div>`;
+  };
+
+  /* ================= AgendaKu link ================= */
+  const CATC = { Work: ['#EEEAFE', '#4B3DB0'], Family: ['#FFE6D9', '#9A4A22'], School: ['#DDF4EA', '#1F6E55'], Personal: ['#FCE4EA', '#8E3049'], Other: ['#EFEDF5', '#5E5878'] };
+  const catName = (c) => t('cat' + (CATC[c] ? c : 'Other'));
+  let agendaLoading = false;
+  function agendaHtml() {
+    const s = S(), c = PS.conn(), cache = s.agendaCache;
+    const head = `<div class="between"><h2 class="h2">${icon('calendar', 26)}${esc(t('agendaToday'))}</h2><span class="row"><span class="pill" style="background:#E0EEFF;color:#2B5C99">AgendaKu</span><button class="iconbtn" style="width:36px;height:36px" data-act="agendaRefresh" aria-label="${esc(t('refresh'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button></span></div>`;
+    if (!c.url) return head + `<span class="small">${esc(t('agendaNeedConn'))}</span>`;
+    if (!cache) return head + (agendaLoading ? PS.loading(t('loading')) : `<span class="small">${esc(t('agendaTapRefresh'))}</span>`);
+    const today = dayKey(), tomorrow = PS.addDays(today, 1);
+    const todayItems = cache.items.filter((x) => x.date === today), tmr = cache.items.filter((x) => x.date === tomorrow), later = cache.items.filter((x) => x.date > tomorrow);
+    const row = (x) => { const cc = CATC[x.category] || CATC.Other; return `<div class="row" style="align-items:stretch"><span style="font-size:13px;font-weight:800;color:#6A5ACD;width:46px;padding-top:8px">${esc(x.start || t('allDay'))}</span><div style="flex:1;background:${cc[0]};border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700;${x.status === 'Done' ? 'opacity:.6;text-decoration:line-through' : ''}">${esc(x.title)}<br><span style="font-size:12px;font-weight:600;color:${cc[1]}">${esc(catName(x.category))}${x.location ? ' · ' + esc(x.location) : ''}${x.bring ? ' · 🎒 ' + esc(x.bring) : ''}</span></div></div>`; };
+    return head + (todayItems.length ? todayItems.map(row).join('') : `<span class="small">${esc(t('agendaNoneToday'))}</span>`)
+      + (tmr.length ? `<span class="small" style="margin-top:4px">${esc(t('tomorrow'))} · ${tmr.length} ${esc(t('agendaItems'))}</span>${tmr.slice(0, 3).map(row).join('')}` : '')
+      + (later.length ? `<span class="small">${esc(t('agendaLater', { n: later.length }))}</span>` : '')
+      + `<span class="small" style="color:#6B6585">${esc(t('agendaAddHint'))} · ${esc(t('updatedAt', { t: new Date(cache.at).toLocaleTimeString(s.lang === 'en' ? 'en-GB' : 'id-ID', { hour: '2-digit', minute: '2-digit' }) }))}</span>`;
+  }
+  PS.loadAgenda = async function (force) {
+    const s = S(), c = PS.conn(); if (!c.url || !c.token || agendaLoading) return;
+    if (!force && s.agendaCache && Date.now() - s.agendaCache.at < 10 * 60 * 1000) return;
+    agendaLoading = true; const box = document.getElementById('agendaCard'); if (box) box.innerHTML = agendaHtml();
+    try { const r = await PS.call({ action: 'agenda', days: 7 }); s.agendaCache = { at: Date.now(), items: r.items || [] }; PS.save({ noSync: true }); }
+    catch (e) { if (force) PS.toast(e.message.indexOf('unknown action') >= 0 ? t('agendaUpdateBackend') : e.message, 4000); }
+    agendaLoading = false; const b2 = document.getElementById('agendaCard'); if (b2) b2.innerHTML = agendaHtml();
+  };
+  V.home_after = () => PS.loadAgenda(false);
+  A.agendaRefresh = () => PS.loadAgenda(true);
+  A.sendToAgenda = async (el) => {
+    const d = S().deadlines.find((x) => x.id === el.dataset.id); if (!d) return;
+    el.disabled = true; el.textContent = '…';
+    try {
+      const r = await PS.call({ action: 'addAgenda', item: { title: d.title, date: d.date, category: 'Personal', notes: 'Deadline dari Putri Space' } });
+      d.agendaId = r.item && r.item.id; PS.save(); PS.toast(r.item && r.item.calendarError ? t('sentNoCal') : t('sentToAgenda'), 3500); S().agendaCache = null; PS.render();
+    } catch (e) { el.disabled = false; el.textContent = t('sendToAgenda'); PS.toast(e.message.indexOf('unknown action') >= 0 ? t('agendaUpdateBackend') : e.message, 4000); }
   };
 
   /* ================= Deadlines & CPE ================= */
@@ -131,7 +167,8 @@
         <div class="field"><label class="lbl" for="cpeN">${esc(t('needed'))}</label><input id="cpeN" class="in" inputmode="decimal" value="${s.cpe.need}"></div></div>
         <button class="btn soft sm" data-act="saveCpe">${esc(t('save'))}</button></section>
       <section class="stack">${list.map((d) => `<div class="tile h">${ic((COLORS[d.color] || COLORS.lav)[2], (COLORS[d.color] || COLORS.lav)[0], 'sm')}<span class="stack grow" style="gap:0"><span class="t">${esc(d.title)}</span><span class="s">${esc(PS.fmtDate(d.date))} · ${daysUntil(d.date) >= 0 ? esc(t('daysLeft', { n: daysUntil(d.date) })) : esc(t('passed'))}</span></span>
-        <button class="btn sm soft" data-act="editDeadline" data-id="${d.id}">${esc(t('edit'))}</button></div>`).join('')}</section>
+        <span class="stack" style="gap:6px;align-items:flex-end"><button class="btn sm soft" data-act="editDeadline" data-id="${d.id}">${esc(t('edit'))}</button>${d.agendaId ? `<span class="pill" style="background:#DDF4EA;color:#1F6E55">✓ AgendaKu</span>` : daysUntil(d.date) >= 0 ? `<button class="btn sm mint" data-act="sendToAgenda" data-id="${d.id}">${esc(t('sendToAgenda'))}</button>` : ''}</span></div>`).join('')}</section>
+      <span class="small">${esc(t('sendToAgendaHint'))}</span>
       <button class="btn" data-act="editDeadline" data-id="">${esc(t('addDeadline'))}</button></div>`;
   };
   A.saveCpe = () => { const s = S(); s.cpe = { year: +document.getElementById('cpeY').value || s.cpe.year, done: +document.getElementById('cpeD').value || 0, need: +document.getElementById('cpeN').value || 20 }; PS.save(); PS.toast(t('saved')); };
@@ -178,7 +215,7 @@
       <section class="card">${secHead('cap', t('eduPubs'), 'editEdu')}
         ${p.education.map((e) => `<span style="font-size:13.5px">${esc(e)}</span>`).join('')}
         ${p.pubs.map((e) => `<span style="font-size:13.5px"><b>${esc(t('journal'))}</b> · ${esc(e)}</span>`).join('')}</section>
-      <a class="btn" href="#cv">${icon('import', 22)}${esc(t('exportCV'))}</a></div>`;
+      <a class="btn" href="#cv">${icon('importW', 22)}${esc(t('exportCV'))}</a></div>`;
   };
   A.editHead = () => { const p = S().profile; PS.sheet(`<h2 class="h2">${esc(t('profile'))}</h2>
     <div class="field"><label class="lbl" for="pN">${esc(t('fullName'))}</label><input id="pN" class="in" value="${esc(p.name)}"></div>

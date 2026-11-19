@@ -33,6 +33,7 @@
   I.speaker = '<path d="M3 9.5v5h4l5 4.5v-14L7 9.5z" fill="#6FA4EE"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" stroke="#F28BA6" stroke-width="2" stroke-linecap="round" fill="none"/>';
   I.mic = '<rect x="8" y="2" width="8" height="13" rx="4" fill="#F28BA6"/><path d="M5 11a7 7 0 0 0 14 0" fill="none" stroke="#A23B57" stroke-width="2" stroke-linecap="round"/><path d="M12 18v3" stroke="#A23B57" stroke-width="2" stroke-linecap="round"/>';
   I.quiz = '<circle cx="12" cy="12" r="10" fill="#A8E3CB"/><text x="12" y="16.5" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="13" font-weight="700" fill="#1F6E55">?</text>';
+  I.importW = '<rect x="4" y="18" width="16" height="3.5" rx="1.75" fill="#FFD9A8"/><path d="M12 3v11M7 9.5l5 5 5-5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
   I.import = '<rect x="4" y="18" width="16" height="3.5" rx="1.75" fill="#FFD9A8"/><path d="M12 3v11M7 9.5l5 5 5-5" stroke="#6A5ACD" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
   // HR topic icons
   I.t1 = '<path d="M12 2 4 6v12l8 4 8-4V6z" fill="#C9C0F2"/><path d="M12 2v20l8-4V6z" fill="#9C90E3"/><circle cx="12" cy="12" r="3.2" fill="#F5C451"/>';

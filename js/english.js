@@ -255,11 +255,12 @@ Return JSON: {"band": estimated band (FC, LR, GRA only), "criteria": {"FC": {"ba
   A.genReading = async (el) => {
     const out = document.getElementById('rOut'); el.disabled = true; out.innerHTML = PS.loading(t('generating'));
     try {
-      const r = await PS.ai({ feature: 'reading', max: 3500, system: coach(), prompt:
+      const r = await PS.ai({ feature: 'reading', max: 4000, system: coach(), prompt:
 `Write an ORIGINAL IELTS Academic Reading practice set at band 7-8 difficulty on: ${TOPICS[st.rTopic || 'random']}.
 Passage: 550-650 words, academic style, 5-6 paragraphs separated by blank lines, a title.
 Then 9 questions mixing: 4 "tfng" (answer TRUE/FALSE/NOT GIVEN), 3 "mcq" (4 options, answer is the letter A-D), 2 "short" (answer max 3 words from the passage; give alternatives separated by "/").
 "explain" for each: one short sentence in ${PS.langName()} pointing to the evidence.
+Inside JSON strings use \\n\\n for paragraph breaks (never raw line breaks). Keep each "explain" under 20 words.
 Return JSON: {"title": "", "passage": "", "questions": [{"type": "tfng|mcq|short", "q": "", "options": ["..."] (mcq only), "answer": "", "explain": ""}]}` });
       if (!r.passage || !(r.questions || []).length) throw new Error(t('aiBadFormat'));
       st.reading = r; PS.render();
@@ -301,10 +302,11 @@ Return JSON: {"title": "", "passage": "", "questions": [{"type": "tfng|mcq|short
     const sec = st.lSec || 1;
     const kind = { 1: 'a conversation between two people in an everyday social context (e.g. booking, enquiry) with names, numbers, dates and addresses', 2: 'a monologue in an everyday social context (e.g. a tour guide or facility announcement)', 3: 'a conversation between two or three people in an academic context (students and a tutor discussing an assignment)', 4: 'a university lecture monologue on an academic subject' }[sec];
     try {
-      const r = await PS.ai({ feature: 'listening', max: 3000, system: coach(), prompt:
+      const r = await PS.ai({ feature: 'listening', max: 4000, system: coach(), prompt:
 `Write an ORIGINAL IELTS Listening Section ${sec} practice: ${kind}. Script length 380-480 words, natural spoken English.
 Then 8 questions in order of the script: Section 1-2 mostly "short" (form/note completion, answer max 2 words or a number; alternatives separated by "/") plus some "mcq"; Section 3-4 mostly "mcq" (4 options, answer letter) plus some "short".
 "explain": one short sentence in ${PS.langName()}.
+Keep each "explain" under 20 words. No raw line breaks inside JSON strings.
 Return JSON: {"title": "", "section": ${sec}, "script": [{"speaker": "name or Lecturer", "voice": "f|m", "text": ""}], "questions": [{"type": "short|mcq", "q": "", "options": [] , "answer": "", "explain": ""}]}` });
       if (!(r.script || []).length || !(r.questions || []).length) throw new Error(t('aiBadFormat'));
       st.listening = r; PS.render();

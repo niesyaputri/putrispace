@@ -1,6 +1,10 @@
 /* Putri Space · translations (ID / EN) · Created by CreanovativeCo */
 window.PS_I18N = {
   id: {
+    agendaToday: 'Agenda hari ini', refresh: 'Muat ulang', agendaNeedConn: 'Sambungkan dulu di Lainnya → Koneksi untuk melihat agenda dari AgendaKu.', agendaTapRefresh: 'Ketuk tombol muat ulang untuk mengambil agenda.', loading: 'Memuat…',
+    agendaNoneToday: 'Tidak ada agenda hari ini. Waktunya belajar!', tomorrow: 'Besok', agendaItems: 'agenda', agendaLater: '+{n} agenda di 7 hari ke depan', agendaAddHint: 'Tambah agenda lewat ikon AgendaKu di layar utama', updatedAt: 'diperbarui {t}', allDay: 'Seharian',
+    catWork: 'Pekerjaan', catFamily: 'Keluarga', catSchool: 'Sekolah', catPersonal: 'Pribadi', catOther: 'Lainnya',
+    sendToAgenda: 'Kirim ke AgendaKu', sendToAgendaHint: 'Deadline yang dikirim masuk ke Sheet AgendaKu dan Google Calendar (kategori Pribadi).', sentToAgenda: 'Masuk ke AgendaKu & Google Calendar ✓', sentNoCal: 'Masuk ke AgendaKu (Calendar gagal, cek izin)', agendaUpdateBackend: 'Backend perlu diperbarui ke v1.1.0 (lihat panduan update).',
     navProfile: 'Profil', navEnglish: 'English', navHome: 'Beranda', navHR: 'HR', navMore: 'Lainnya',
     welcomeTitle: 'Selamat datang di Putri Space', welcomeText: 'Ruang pribadimu untuk profil karier, latihan IELTS, grammar, dan materi HR, semua di satu tempat.',
     yourName: 'Nama panggilan', next: 'Lanjut', prev: 'Sebelumnya', back: 'Kembali',
@@ -25,7 +29,7 @@ window.PS_I18N = {
     comingSoon: 'Segera hadir', scholarTracker: 'Beasiswa Tracker', docsVault: 'Dokumen Penting', interviewAI: 'Latihan Interview AI', reflection: 'Jurnal Refleksi', weeklyReport: 'Laporan Mingguan',
     wipeLocal: 'Hapus data di HP ini', confirmWipe: 'Semua data lokal akan dihapus. Pastikan sudah disimpan ke Sheet atau diekspor. Lanjutkan?',
     storageFull: 'Penyimpanan HP penuh', noBackend: 'Koneksi belum diatur. Buka Lainnya → Koneksi.', badToken: 'Kode koneksi salah', timeout: 'Waktu habis, coba lagi', offline: 'Tidak ada internet atau URL salah',
-    aiThinking: 'AI sedang berpikir…', aiBadFormat: 'Jawaban AI tidak terbaca, coba lagi', noTTS: 'Perangkat ini belum mendukung suara', useKeyboardMic: 'Pakai tombol mic di keyboard iPhone untuk dikte', listeningNow: 'Mendengarkan… ketuk lagi untuk berhenti',
+    aiThinking: 'AI sedang berpikir…', aiBadFormat: 'Jawaban AI tidak terbaca, coba lagi', aiTooLong: 'Jawaban AI terpotong karena terlalu panjang, coba lagi', noTTS: 'Perangkat ini belum mendukung suara', useKeyboardMic: 'Pakai tombol mic di keyboard iPhone untuk dikte', listeningNow: 'Mendengarkan… ketuk lagi untuk berhenti',
     fourSkills: '4 skill utama', priority: 'PRIORITAS', mockTest: 'Mock Test lengkap', mockTestSub: '4 skill · pakai timer · band estimasi', soon: 'Segera', dueCards: '{n} kartu siap diulang hari ini', grammarTenses: 'grammar & tenses', editScores: 'Ubah skor & target', score: 'Skor',
     skL: 'Section 1–4 · audio · soal AI', skR: 'Academic · T/F/NG · soal AI', skW: 'Task 1 & 2 · skor per kriteria', skS: 'Part 1–3 · dikte · feedback AI',
     geCheck: 'Cek Kalimat', geCheckSub: 'Koreksi AI', geMistakes: 'My Mistakes', geMistakesSub: 'Salah → benar', geTenses: 'Tenses Lab', geTensesSub: '16 tenses + latihan', geStories: 'Read & Listen', geStoriesSub: 'Cerita + pelafalan', geVocab: 'Kosakata', geVocabSub: 'Kartu hafalan', geJournal: 'Jurnal Harian', geJournalSub: 'Tulis 5 kalimat',
@@ -61,6 +65,10 @@ window.PS_I18N = {
     quizGreat: 'Keren! Pemahamanmu kuat.', quizKeepGoing: 'Bagus, ulangi kartu yang masih ragu ya.', again: 'Ulangi'
   },
   en: {
+    agendaToday: 'Today\u2019s agenda', refresh: 'Refresh', agendaNeedConn: 'Connect first in More → Connection to see your AgendaKu agenda.', agendaTapRefresh: 'Tap refresh to load your agenda.', loading: 'Loading…',
+    agendaNoneToday: 'Nothing on the agenda today. Time to study!', tomorrow: 'Tomorrow', agendaItems: 'items', agendaLater: '+{n} items in the next 7 days', agendaAddHint: 'Add agenda items via the AgendaKu icon on your home screen', updatedAt: 'updated {t}', allDay: 'All day',
+    catWork: 'Work', catFamily: 'Family', catSchool: 'School', catPersonal: 'Personal', catOther: 'Other',
+    sendToAgenda: 'Send to AgendaKu', sendToAgendaHint: 'Sent deadlines go into your AgendaKu Sheet and Google Calendar (Personal category).', sentToAgenda: 'Added to AgendaKu & Google Calendar ✓', sentNoCal: 'Added to AgendaKu (Calendar failed, check permissions)', agendaUpdateBackend: 'The backend needs updating to v1.1.0 (see the update guide).',
     navProfile: 'Profile', navEnglish: 'English', navHome: 'Home', navHR: 'HR', navMore: 'More',
     welcomeTitle: 'Welcome to Putri Space', welcomeText: 'Your personal space for your career profile, IELTS practice, grammar and HR materials, all in one place.',
     yourName: 'Nickname', next: 'Next', prev: 'Previous', back: 'Back',
@@ -85,7 +93,7 @@ window.PS_I18N = {
     comingSoon: 'Coming soon', scholarTracker: 'Scholarship Tracker', docsVault: 'Important Documents', interviewAI: 'AI Interview Practice', reflection: 'Reflection Journal', weeklyReport: 'Weekly Report',
     wipeLocal: 'Delete data on this phone', confirmWipe: 'All local data will be deleted. Make sure you saved to the Sheet or exported a backup. Continue?',
     storageFull: 'Phone storage is full', noBackend: 'Connection not set. Open More → Connection.', badToken: 'Wrong connection code', timeout: 'Timed out, please try again', offline: 'No internet or wrong URL',
-    aiThinking: 'AI is thinking…', aiBadFormat: 'Could not read the AI reply, please try again', noTTS: 'Voice is not supported on this device', useKeyboardMic: 'Use the mic button on your iPhone keyboard to dictate', listeningNow: 'Listening… tap again to stop',
+    aiThinking: 'AI is thinking…', aiBadFormat: 'Could not read the AI reply, please try again', aiTooLong: 'The AI reply was cut off (too long), please try again', noTTS: 'Voice is not supported on this device', useKeyboardMic: 'Use the mic button on your iPhone keyboard to dictate', listeningNow: 'Listening… tap again to stop',
     fourSkills: '4 core skills', priority: 'PRIORITY', mockTest: 'Full Mock Test', mockTestSub: '4 skills · timed · estimated band', soon: 'Soon', dueCards: '{n} cards ready to review today', grammarTenses: 'grammar & tenses', editScores: 'Edit scores & targets', score: 'Score',
     skL: 'Sections 1–4 · audio · AI questions', skR: 'Academic · T/F/NG · AI questions', skW: 'Task 1 & 2 · criteria scores', skS: 'Parts 1–3 · dictation · AI feedback',
     geCheck: 'Sentence Check', geCheckSub: 'AI correction', geMistakes: 'My Mistakes', geMistakesSub: 'Wrong → right', geTenses: 'Tenses Lab', geTensesSub: '16 tenses + practice', geStories: 'Read & Listen', geStoriesSub: 'Stories + pronunciation', geVocab: 'Vocabulary', geVocabSub: 'Flashcards', geJournal: 'Daily Journal', geJournalSub: 'Write 5 sentences',
