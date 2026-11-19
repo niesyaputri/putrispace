@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const C = window.PS_CONTENT;
-  const VERSION = '1.3.0';
+  const VERSION = '1.3.1';
   const KEY = 'putrispace.v1';
   const CONN_KEY = 'putrispace.conn';
   const PS = (window.PS = { VERSION, C, views: {}, acts: {}, inputs: {} });
@@ -208,19 +208,21 @@
 
   /* ---------- speech ---------- */
   const synth = window.speechSynthesis;
+  // iOS/macOS list novelty & robotic voices as English (Bad News, Bahh, Zarvox, Grandpa…) — never use them
+  const BAD_VOICE = /\b(albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|deranged|hysterical|eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|fred|junior|kathy|ralph|princess|vicki|victoria|agnes|bruce)\b/i;
+  const FEM_V = /samantha|karen|moira|tessa|serena|kate|stephanie|martha|fiona|catherine|susan|allison|ava|nicky|zoe|joelle|libby|sonia|natasha|hazel|emma|amy|olivia|isla|female/i;
+  const MALE_V = /daniel|arthur|oliver|gordon|aaron|\btom\b|alex|evan|nathan|rishi|\blee\b|malcolm|george|harry|james|ryan|thomas|william|male/i;
   PS.voices = () => (synth ? synth.getVoices() : []);
+  PS.enVoices = () => PS.voices().filter((v) => v.lang && v.lang.replace('_', '-').startsWith('en') && !BAD_VOICE.test(v.name));
+  PS.voiceGender = (v) => (FEM_V.test(v.name) && !/\bmale\b/i.test(v.name) ? 'f' : MALE_V.test(v.name) ? 'm' : '');
+  PS.voiceRank = (v) => (/premium/i.test(v.name) ? 3 : /enhanced|natural|neural/i.test(v.name) ? 2 : 0) + (v.localService ? 0.5 : 0);
   if (synth && synth.addEventListener) synth.addEventListener('voiceschanged', () => {});
   PS.pickVoice = function (accent, gender) {
-    const vs = PS.voices().filter((v) => v.lang && v.lang.replace('_', '-').startsWith('en'));
+    const vs = PS.enVoices().sort((a, b) => PS.voiceRank(b) - PS.voiceRank(a));
     let pool = vs.filter((v) => v.lang.replace('_', '-') === accent);
     if (!pool.length) pool = vs;
-    if (gender) {
-      const fem = /female|samantha|karen|serena|moira|tessa|kate|stephanie|catherine|martha|fiona|victoria|zira|susan|libby|sonia|natasha/i;
-      const g = pool.filter((v) => (gender === 'f') === fem.test(v.name));
-      if (g.length) pool = g;
-    }
-    const enhanced = pool.find((v) => /premium|enhanced|natural/i.test(v.name));
-    return enhanced || pool[0] || null;
+    if (gender) { const g = pool.filter((v) => PS.voiceGender(v) === gender); if (g.length) pool = g; else { const g2 = vs.filter((v) => PS.voiceGender(v) === gender); if (g2.length) pool = g2; } }
+    return pool[0] || null;
   };
   PS.speak = function (text, opts = {}) {
     if (!synth) { PS.toast(t('noTTS')); return null; }

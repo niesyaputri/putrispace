@@ -17,18 +17,16 @@
 
   /* ---------- audio (speech synthesis, one voice per speaker) ---------- */
   const synth = window.speechSynthesis;
-  const FEM = /female|samantha|karen|serena|moira|tessa|kate|stephanie|catherine|martha|fiona|victoria|zira|susan|libby|sonia|natasha|hazel|emma|amy|olivia|ava|allison|nicky|joelle/i;
+  // One clear voice per speaker: same gender → a different good voice (other accent if needed), never pitch tricks
   function voiceFor(spec) {
-    const g = (spec || 'f')[0], alt = /2$/.test(spec || '');
-    const en = PS.voices().filter((v) => v.lang && v.lang.replace('_', '-').startsWith('en'));
-    const acc = S().voice.accent || 'en-GB';
-    const byG = (list) => { const x = list.filter((v) => (g === 'f') === FEM.test(v.name)); return x.length ? x : list; };
-    const local = byG(en.filter((v) => v.lang.replace('_', '-') === acc)), other = byG(en.filter((v) => v.lang.replace('_', '-') !== acc));
-    const pool = local.length ? local : other;
-    const best = (list) => list.find((v) => /premium|enhanced|natural/i.test(v.name)) || list[0] || null;
-    if (!alt) return { voice: best(pool), pitch: 1 };
-    const second = pool.filter((v) => v !== best(pool));
-    return { voice: second[0] || best(other) || best(pool), pitch: g === 'f' ? 1.12 : 0.9 };
+    const g = (spec || 'f')[0], n = /2$/.test(spec || '') ? 1 : 0;
+    const acc = S().voice.accent || 'en-GB', vs = PS.enVoices().sort((x, y) => PS.voiceRank(y) - PS.voiceRank(x));
+    const same = (v) => v.lang.replace('_', '-') === acc;
+    const byG = vs.filter((v) => PS.voiceGender(v) === g);
+    // distinct names only (a voice can be listed twice), home accent first
+    const seen = {}, list = byG.filter(same).concat(byG.filter((v) => !same(v))).filter((v) => { const k = v.name.replace(/\s*\(.*\)/, ''); if (seen[k]) return false; seen[k] = 1; return true; });
+    const voice = list[n] || list[0] || PS.pickVoice(acc, g) || vs[0] || null;
+    return { voice, pitch: 1 };
   }
   const au = { token: 0, rate: 1, plays: {}, playing: null, line: -1 };
   function stop() { au.token++; au.playing = null; au.line = -1; if (synth) synth.cancel(); paintPlayer(); }
