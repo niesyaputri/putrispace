@@ -64,15 +64,19 @@ TEXT:
         <div class="between" style="align-items:flex-start">${ic(i, bg)}<span style="font-size:12px;font-weight:800;color:${ink}">${sc.score.toFixed(1)} → ${sc.target.toFixed(1)}</span></div>
         <span class="t" style="font-size:15px">${SKNAME[k]}</span><span class="s">${esc(t('sk' + k))}</span>
         <div class="bar" style="background:${bg};height:7px"><i style="width:${pct}%;background:${bar}"></i></div></a>`; };
-    const ge = [['check', 'check', '#EEEAFE', 'geCheck', 'geCheckSub'], ['mistakes', 'mistakes', '#FCE4EA', 'geMistakes', 'geMistakesSub'], ['tenses', 'tenses', '#FFF4D6', 'geTenses', 'geTensesSub'], ['stories', 'story', '#E0EEFF', 'geStories', 'geStoriesSub'], ['vocab', 'vocab', '#DDF4EA', 'geVocab', 'geVocabSub'], ['journal', 'journal', '#FFE6D9', 'geJournal', 'geJournalSub']];
+    const ge = [['check', 'check', '#EEEAFE', 'geCheck', 'geCheckSub'], ['mistakes', 'mistakes', '#FCE4EA', 'geMistakes', 'geMistakesSub'], ['stories', 'story', '#E0EEFF', 'geStories', 'geStoriesSub'], ['vocab', 'vocab', '#DDF4EA', 'geVocab', 'geVocabSub'], ['journal', 'journal', '#FFE6D9', 'geJournal', 'geJournalSub']];
     return `<div class="page">
       <div class="top"><div class="grow"><div class="eyebrow">English &amp; IELTS</div><h1 class="h1">Road to Band ${Math.max(...['L', 'R', 'W', 'S'].map((k) => s.ielts[k].target)).toFixed(1)}</h1></div>
         <button class="ring" style="cursor:pointer" data-act="editScores" aria-label="${esc(t('editScores'))}"><b>${PS.overall().toFixed(1)}</b><span>overall</span></button></div>
-      <div class="row"><span class="pill" style="background:#6A5ACD;color:#fff">1</span><h2 class="h2">IELTS · ${esc(t('fourSkills'))}</h2></div>
+      <div class="row"><span class="pill" style="background:#5BBF97;color:#fff">1</span><h2 class="h2">${esc(t('academicLibrary'))}</h2><span class="small">IELTS Academic</span></div>
+      ${(() => { const pr = PS.grammarProgress ? PS.grammarProgress() : { known: 0, total: 0 }; return `<a class="tile h" href="#grammar" style="background:#DDF4EA;border:none;min-height:76px">${ic('tenses', '#fff')}<span class="stack grow" style="gap:2px"><span class="t" style="font-size:15px">${esc(t('grammarCards'))}</span><span class="s" style="color:#1F6E55">${esc(t('grammarCardsSub', { n: pr.total }))}</span><div class="bar" style="background:#fff;height:6px;margin-top:4px"><i style="width:${pr.total ? Math.round(pr.known / pr.total * 100) : 0}%;background:#5BBF97"></i></div></span><span class="pill" style="background:#fff;color:#1F6E55">${pr.known}/${pr.total}</span></a>`; })()}
+      ${(() => { const pr = PS.listenProgress ? PS.listenProgress() : { done: 0, total: 0 }, LD = window.PS_LISTEN || { lessons: [], tests: [] }; return `<a class="tile h" href="#listen" style="background:#E0EEFF;border:none;min-height:76px">${ic('listening', '#fff')}<span class="stack grow" style="gap:2px"><span class="t" style="font-size:15px">${esc(t('libListening'))}</span><span class="s" style="color:#2B5C99">${esc(t('libListeningSub', { n: LD.lessons.length, m: LD.tests.length + LD.lessons.filter((x) => x.practice && x.practice.script).length }))}</span><div class="bar" style="background:#fff;height:6px;margin-top:4px"><i style="width:${pr.total ? Math.round(pr.done / pr.total * 100) : 0}%;background:#6FA4EE"></i></div></span><span class="pill" style="background:#fff;color:#2B5C99">${pr.done}/${pr.total}</span></a>`; })()}
+      <section class="grid2">${[['reading', '#DDF4EA', 'libReading'], ['vocab', '#FFF4D6', 'libVocab'], ['speaking', '#FCE4EA', 'libSpeaking'], ['writing', '#FFE6D9', 'libWriting']].map(([i, bg, k]) => `<div class="tile h" style="opacity:.8">${ic(i, bg, 'sm')}<span class="stack" style="gap:0"><span class="t" style="font-size:13px">${esc(t(k))}</span><span class="pill" style="background:#F3F0FF;color:#6B6585;align-self:flex-start;margin-top:2px">${esc(t('soon'))}</span></span></div>`).join('')}</section>
+      <div class="row" style="margin-top:4px"><span class="pill" style="background:#6A5ACD;color:#fff">2</span><h2 class="h2">IELTS · ${esc(t('aiPracticeTitle'))}</h2></div>
       <section class="grid2">${['L', 'R', 'W', 'S'].map(skill).join('')}</section>
       <div class="tile h" style="background:#2E2A45;color:#fff;border:none">${ic('clock', 'rgba(255,255,255,.12)')}<span class="stack grow" style="gap:0"><span class="t">${esc(t('mockTest'))}</span><span class="s" style="color:#DAD5F2">${esc(t('mockTestSub'))}</span></span><span class="pill" style="background:#FFE7C2;color:#6B4E00">${esc(t('soon'))}</span></div>
       ${due ? `<a class="tile h" href="#review" style="background:#FFF4D6;border:none">${PS.owl(true, 40)}<span class="stack grow" style="gap:0"><span class="t">${esc(t('dueCards', { n: due }))}</span><span class="s">${esc(PS.dueMistakes().slice(0, 3).map((m) => m.pattern || m.category).join(' · '))}</span></span></a>` : ''}
-      <div class="row" style="margin-top:4px"><span class="pill" style="background:#5BBF97;color:#fff">2</span><h2 class="h2">General English</h2><span class="small">${esc(t('grammarTenses'))}</span></div>
+      <div class="row" style="margin-top:4px"><span class="pill" style="background:#E8875A;color:#fff">3</span><h2 class="h2">${esc(t('aiTools'))}</h2><span class="small">${esc(t('grammarTenses'))}</span></div>
       <section class="grid2">${ge.map(([r, i, bg, k, sub]) => `<a class="tile h" href="#${r}">${ic(i, bg, 'sm')}<span class="stack" style="gap:0"><span class="t">${esc(t(k))}</span><span class="s">${esc(t(sub))}</span></span></a>`).join('')}</section></div>`;
   };
   A.editScores = () => {
@@ -252,18 +256,26 @@ Return JSON: {"band": estimated band (FC, LR, GRA only), "criteria": {"FC": {"ba
   }
   A.rTopic = (el) => { st.rTopic = el.dataset.v; PS.render(); };
   A.rNew = () => { st.reading = null; PS.render(); };
+  // Two small AI calls (text first as plain text, then questions as JSON) so replies are never cut off
+  const QFORMAT = `{"questions": [{"type": "tfng|mcq|short", "q": "", "options": ["..."] (mcq only), "answer": "", "explain": ""}]}`;
   A.genReading = async (el) => {
-    const out = document.getElementById('rOut'); el.disabled = true; out.innerHTML = PS.loading(t('generating'));
+    const out = document.getElementById('rOut'); el.disabled = true; out.innerHTML = PS.loading(t('generating') + ' (1/2)');
     try {
-      const r = await PS.ai({ feature: 'reading', max: 4000, system: coach(), prompt:
-`Write an ORIGINAL IELTS Academic Reading practice set at band 7-8 difficulty on: ${TOPICS[st.rTopic || 'random']}.
-Passage: 550-650 words, academic style, 5-6 paragraphs separated by blank lines, a title.
-Then 9 questions mixing: 4 "tfng" (answer TRUE/FALSE/NOT GIVEN), 3 "mcq" (4 options, answer is the letter A-D), 2 "short" (answer max 3 words from the passage; give alternatives separated by "/").
-"explain" for each: one short sentence in ${PS.langName()} pointing to the evidence.
-Inside JSON strings use \\n\\n for paragraph breaks (never raw line breaks). Keep each "explain" under 20 words.
-Return JSON: {"title": "", "passage": "", "questions": [{"type": "tfng|mcq|short", "q": "", "options": ["..."] (mcq only), "answer": "", "explain": ""}]}` });
-      if (!r.passage || !(r.questions || []).length) throw new Error(t('aiBadFormat'));
-      st.reading = r; PS.render();
+      const text = await PS.ai({ feature: 'reading', max: 2000, json: false, system: 'You write original IELTS Academic Reading passages. Output plain text only, no markdown.', prompt:
+`Write an ORIGINAL IELTS Academic Reading passage at band 7-8 difficulty on: ${TOPICS[st.rTopic || 'random']}.
+Format: first line = the title only. Then a blank line. Then 5-6 academic paragraphs (520-620 words in total) separated by blank lines.` });
+      const lines = String(text).trim().split('\n'); const title = lines.shift().replace(/^[#*\s]+|[*\s]+$/g, '');
+      const passage = lines.join('\n').trim();
+      if (passage.split(/\s+/).length < 250) throw new Error(t('aiBadFormat'));
+      out.innerHTML = PS.loading(t('generating') + ' (2/2)');
+      const r = await PS.ai({ feature: 'reading', max: 2500, system: coach(), prompt:
+`Write 9 IELTS Academic Reading questions for the passage below, in passage order: 4 "tfng" (answer TRUE/FALSE/NOT GIVEN), 3 "mcq" (4 options, answer = letter A-D), 2 "short" (answer max 3 words copied from the passage; alternatives separated by "/").
+"explain": max 15 words in ${PS.langName()}, pointing to the evidence. No line breaks inside strings.
+Return JSON: ${QFORMAT}
+PASSAGE:
+${passage}` });
+      if (!(r.questions || []).length) throw new Error(t('aiBadFormat'));
+      st.reading = { title, passage, questions: r.questions }; PS.render();
     } catch (e) { out.innerHTML = `<div class="card">⚠ ${esc(e.message)}</div>`; el.disabled = false; }
   };
   A.checkReading = () => {
@@ -298,18 +310,27 @@ Return JSON: {"title": "", "passage": "", "questions": [{"type": "tfng|mcq|short
     next();
   };
   A.genListening = async (el) => {
-    const out = document.getElementById('lOut'); el.disabled = true; out.innerHTML = PS.loading(t('generating'));
+    const out = document.getElementById('lOut'); el.disabled = true; out.innerHTML = PS.loading(t('generating') + ' (1/2)');
     const sec = st.lSec || 1;
     const kind = { 1: 'a conversation between two people in an everyday social context (e.g. booking, enquiry) with names, numbers, dates and addresses', 2: 'a monologue in an everyday social context (e.g. a tour guide or facility announcement)', 3: 'a conversation between two or three people in an academic context (students and a tutor discussing an assignment)', 4: 'a university lecture monologue on an academic subject' }[sec];
     try {
-      const r = await PS.ai({ feature: 'listening', max: 4000, system: coach(), prompt:
-`Write an ORIGINAL IELTS Listening Section ${sec} practice: ${kind}. Script length 380-480 words, natural spoken English.
-Then 8 questions in order of the script: Section 1-2 mostly "short" (form/note completion, answer max 2 words or a number; alternatives separated by "/") plus some "mcq"; Section 3-4 mostly "mcq" (4 options, answer letter) plus some "short".
-"explain": one short sentence in ${PS.langName()}.
-Keep each "explain" under 20 words. No raw line breaks inside JSON strings.
-Return JSON: {"title": "", "section": ${sec}, "script": [{"speaker": "name or Lecturer", "voice": "f|m", "text": ""}], "questions": [{"type": "short|mcq", "q": "", "options": [] , "answer": "", "explain": ""}]}` });
-      if (!(r.script || []).length || !(r.questions || []).length) throw new Error(t('aiBadFormat'));
-      st.listening = r; PS.render();
+      const text = await PS.ai({ feature: 'listening', max: 1800, json: false, system: 'You write original IELTS Listening scripts. Output plain text only, no markdown.', prompt:
+`Write an ORIGINAL IELTS Listening Section ${sec} script: ${kind}. 380-460 words of natural spoken English.
+Format: first line = a short title. Then one line per turn as "Speaker name (f) : text" or "Speaker name (m) : text" (f = female voice, m = male voice).` });
+      const lines = String(text).trim().split('\n').map((x) => x.trim()).filter(Boolean);
+      const title = lines.shift().replace(/^[#*\s]+|[*\s]+$/g, '');
+      const script = lines.map((l) => { const m = l.match(/^\**([^:(]{1,40}?)\s*(?:\((f|m)\))?\s*\**\s*:\s*(.+)$/i); return m ? { speaker: m[1].trim(), voice: (m[2] || '').toLowerCase(), text: m[3].trim() } : { speaker: '', voice: '', text: l }; });
+      if (script.length < 3) throw new Error(t('aiBadFormat'));
+      out.innerHTML = PS.loading(t('generating') + ' (2/2)');
+      const plain = script.map((x) => (x.speaker ? x.speaker + ': ' : '') + x.text).join('\n');
+      const r = await PS.ai({ feature: 'listening', max: 2200, system: coach(), prompt:
+`Write 8 IELTS Listening Section ${sec} questions for this script, in script order. ${sec <= 2 ? 'Mostly "short" (form/note completion, answer max 2 words or a number; alternatives separated by "/") plus 2 "mcq".' : 'Mostly "mcq" (4 options, answer = letter A-D) plus 2 "short".'}
+"explain": max 15 words in ${PS.langName()}. No line breaks inside strings.
+Return JSON: {"questions": [{"type": "short|mcq", "q": "", "options": [], "answer": "", "explain": ""}]}
+SCRIPT:
+${plain}` });
+      if (!(r.questions || []).length) throw new Error(t('aiBadFormat'));
+      st.listening = { title, section: sec, script, questions: r.questions }; PS.render();
     } catch (e) { out.innerHTML = `<div class="card">⚠ ${esc(e.message)}</div>`; el.disabled = false; }
   };
   A.checkListening = () => {

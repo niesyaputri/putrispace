@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const C = window.PS_CONTENT;
-  const VERSION = '1.1.3';
+  const VERSION = '1.3.0';
   const KEY = 'putrispace.v1';
   const CONN_KEY = 'putrispace.conn';
   const PS = (window.PS = { VERSION, C, views: {}, acts: {}, inputs: {} });
@@ -277,7 +277,7 @@
     { r: 'hr', icon: 'hr', key: 'navHR' },
     { r: 'more', icon: 'more', key: 'navMore' }
   ];
-  const SECTION = { home: 'home', profile: 'profile', cv: 'profile', deadlines: 'home', english: 'english', ielts: 'english', check: 'english', mistakes: 'english', review: 'english', tenses: 'english', tense: 'english', stories: 'english', story: 'english', vocab: 'english', journal: 'english', hr: 'hr', more: 'more' };
+  const SECTION = { home: 'home', profile: 'profile', cv: 'profile', deadlines: 'home', english: 'english', ielts: 'english', check: 'english', mistakes: 'english', review: 'english', tenses: 'english', tense: 'english', grammar: 'english', listen: 'english', stories: 'english', story: 'english', vocab: 'english', journal: 'english', hr: 'hr', more: 'more' };
   PS.renderNav = function (sec) {
     const nav = document.getElementById('nav');
     nav.innerHTML = NAV.map((n) => {
