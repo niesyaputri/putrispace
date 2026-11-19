@@ -49,6 +49,7 @@
   I.t11 = '<circle cx="12" cy="12" r="9.5" fill="#C9C0F2"/><path d="M12 2.5v19" stroke="#fff" stroke-width="1.6"/><path d="M5 9h5M14 9h5" stroke="#6A5ACD" stroke-width="2" stroke-linecap="round"/><path d="M6.5 9l-2 4.5h4zM17.5 9l-2 4.5h4z" fill="#F5C451"/>';
   I.t12 = '<path d="M3 20l3-11 6 5 6-5 3 11z" fill="#F6B98E"/><circle cx="6" cy="7.5" r="2" fill="#F5C451"/><circle cx="12" cy="4.5" r="2" fill="#F5C451"/><circle cx="18" cy="7.5" r="2" fill="#F5C451"/><rect x="3" y="18" width="18" height="3" rx="1.2" fill="#E8875A"/>';
 
+  I.t13 = '<rect x="2.5" y="8" width="19" height="13" rx="3" fill="#B5D4FA"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2" stroke="#2B5C99" stroke-width="2" fill="none"/><rect x="2.5" y="12" width="19" height="2.6" fill="#6FA4EE"/><rect x="10" y="11" width="4" height="4.6" rx="1" fill="#F5C451"/><circle cx="19" cy="4" r="2" fill="#F7A9BC"/>';
   const OWL = '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M13 24 L17 8 L27 18 Z" fill="#B3A8EC"/><path d="M51 24 L47 8 L37 18 Z" fill="#B3A8EC"/><ellipse cx="32" cy="37" rx="22" ry="22" fill="#C9C0F2"/><ellipse cx="32" cy="45" rx="12" ry="11" fill="#EDE8FF"/><circle cx="24" cy="32" r="8" fill="#fff"/><circle cx="40" cy="32" r="8" fill="#fff"/><circle cx="25" cy="33" r="3.6" fill="#2E2A45"/><circle cx="41" cy="33" r="3.6" fill="#2E2A45"/><circle cx="26.3" cy="31.6" r="1.2" fill="#fff"/><circle cx="42.3" cy="31.6" r="1.2" fill="#fff"/><path d="M29 40 L32 44 L35 40 Z" fill="#F6B98E"/><ellipse cx="16" cy="42" rx="4" ry="2.5" fill="#F7C6D0"/><ellipse cx="48" cy="42" rx="4" ry="2.5" fill="#F7C6D0"/></svg>';
   const OWL_HAPPY = '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M13 24 L17 8 L27 18 Z" fill="#B3A8EC"/><path d="M51 24 L47 8 L37 18 Z" fill="#B3A8EC"/><ellipse cx="32" cy="37" rx="22" ry="22" fill="#C9C0F2"/><ellipse cx="32" cy="45" rx="12" ry="11" fill="#EDE8FF"/><circle cx="24" cy="32" r="8" fill="#fff"/><circle cx="40" cy="32" r="8" fill="#fff"/><path d="M20 33 Q24 29 28 33" stroke="#2E2A45" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M36 33 Q40 29 44 33" stroke="#2E2A45" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M29 40 L32 44 L35 40 Z" fill="#F6B98E"/><ellipse cx="16" cy="42" rx="4" ry="2.5" fill="#F7C6D0"/><ellipse cx="48" cy="42" rx="4" ry="2.5" fill="#F7C6D0"/></svg>';
 
@@ -56,7 +57,8 @@
     { id: 'A', ink: '#6A5ACD', bg: '#EEEAFE', bar: '#6A5ACD', name: { id: 'Fondasi HR', en: 'HR Foundations' }, topics: [1, 2, 3] },
     { id: 'B', ink: '#2B5C99', bg: '#E0EEFF', bar: '#6FA4EE', name: { id: 'Fungsi Inti HR', en: 'Core HR Functions' }, topics: [4, 5, 6, 7, 8] },
     { id: 'C', ink: '#A23B57', bg: '#FCE4EA', bar: '#E0708F', name: { id: 'Spesialisasi Riset', en: 'Research Specialism' }, topics: [9, 10, 11], star: true },
-    { id: 'D', ink: '#9A4A22', bg: '#FFE6D9', bar: '#E8875A', name: { id: 'Kepemimpinan & Perubahan', en: 'Leadership & Change' }, topics: [12] }
+    { id: 'D', ink: '#9A4A22', bg: '#FFE6D9', bar: '#E8875A', name: { id: 'Kepemimpinan & Perubahan', en: 'Leadership & Change' }, topics: [12] },
+    { id: 'E', ink: '#2B5C99', bg: '#E0EEFF', bar: '#6FA4EE', name: { id: 'Lainnya', en: 'Other' }, topics: [13] }
   ];
   const HR_TOPICS = {
     1: { en: 'Strategic HRM', id: 'Strategic HRM', prio: true },
@@ -70,7 +72,8 @@
     9: { en: 'HR Ethics & Fraud Prevention', id: 'HR Ethics & Fraud Prevention', prio: true },
     10: { en: 'People Analytics', id: 'People Analytics', prio: true },
     11: { en: 'Behavioural Integrity', id: 'Behavioural Integrity' },
-    12: { en: 'Leadership & Change', id: 'Leadership & Change' }
+    12: { en: 'Leadership & Change', id: 'Leadership & Change' },
+    13: { en: 'Other · Business Frameworks', id: 'Lainnya · Business Frameworks' }
   };
 
   const PROFILE = {

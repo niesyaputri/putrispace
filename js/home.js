@@ -133,8 +133,8 @@
     const todayItems = cache.items.filter((x) => x.date === today), tmr = cache.items.filter((x) => x.date === tomorrow), later = cache.items.filter((x) => x.date > tomorrow);
     const row = (x) => { const cc = CATC[x.category] || CATC.Other; return `<div class="row" style="align-items:stretch"><span style="font-size:13px;font-weight:800;color:#6A5ACD;width:46px;padding-top:8px">${esc(x.start || t('allDay'))}</span><div style="flex:1;background:${cc[0]};border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700;${x.status === 'Done' ? 'opacity:.6;text-decoration:line-through' : ''}">${esc(x.title)}<br><span style="font-size:12px;font-weight:600;color:${cc[1]}">${esc(catName(x.category))}${x.location ? ' · ' + esc(x.location) : ''}${x.bring ? ' · 🎒 ' + esc(x.bring) : ''}</span></div></div>`; };
     return head + (todayItems.length ? todayItems.map(row).join('') : `<span class="small">${esc(t('agendaNoneToday'))}</span>`)
-      + (tmr.length ? `<span class="small" style="margin-top:4px">${esc(t('tomorrow'))} · ${tmr.length} ${esc(t('agendaItems'))}</span>${tmr.slice(0, 3).map(row).join('')}` : '')
-      + (later.length ? `<span class="small">${esc(t('agendaLater', { n: later.length }))}</span>` : '')
+      + (tmr.length ? `<span class="small" style="margin-top:4px">${esc(t('tomorrow'))} · ${tmr.length} ${esc(t(tmr.length === 1 ? 'agendaItem' : 'agendaItems'))}</span>${tmr.slice(0, 3).map(row).join('')}` : '')
+      + (later.length ? `<span class="small">${esc(t(later.length === 1 ? 'agendaLater1' : 'agendaLater', { n: later.length }))}</span>` : '')
       + `<span class="small" style="color:#6B6585">${esc(t('agendaAddHint'))} · ${esc(t('updatedAt', { t: new Date(cache.at).toLocaleTimeString(s.lang === 'en' ? 'en-GB' : 'id-ID', { hour: '2-digit', minute: '2-digit' }) }))}</span>`;
   }
   PS.loadAgenda = async function (force) {

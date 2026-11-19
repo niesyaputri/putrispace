@@ -2,7 +2,7 @@
 window.PS_I18N = {
   id: {
     agendaToday: 'Agenda hari ini', refresh: 'Muat ulang', agendaNeedConn: 'Sambungkan dulu di Lainnya → Koneksi untuk melihat agenda dari AgendaKu.', agendaTapRefresh: 'Ketuk tombol muat ulang untuk mengambil agenda.', loading: 'Memuat…',
-    agendaNoneToday: 'Tidak ada agenda hari ini. Waktunya belajar!', tomorrow: 'Besok', agendaItems: 'agenda', agendaLater: '+{n} agenda di 7 hari ke depan', agendaAddHint: 'Tambah agenda lewat ikon AgendaKu di layar utama', updatedAt: 'diperbarui {t}', allDay: 'Seharian',
+    agendaNoneToday: 'Tidak ada agenda hari ini. Waktunya belajar!', tomorrow: 'Besok', agendaItem: 'agenda', agendaItems: 'agenda', agendaLater1: '+1 agenda lagi di 7 hari ke depan', agendaLater: '+{n} agenda lagi di 7 hari ke depan', agendaAddHint: 'Tambah agenda lewat ikon AgendaKu di layar utama', updatedAt: 'diperbarui {t}', allDay: 'Seharian',
     catWork: 'Pekerjaan', catFamily: 'Keluarga', catSchool: 'Sekolah', catPersonal: 'Pribadi', catOther: 'Lainnya',
     sendToAgenda: 'Kirim ke AgendaKu', sendToAgendaHint: 'Deadline yang dikirim masuk ke Sheet AgendaKu dan Google Calendar (kategori Pribadi).', sentToAgenda: 'Masuk ke AgendaKu & Google Calendar ✓', sentNoCal: 'Masuk ke AgendaKu (Calendar gagal, cek izin)', agendaUpdateBackend: 'Backend perlu diperbarui ke v1.1.0 (lihat panduan update).',
     navProfile: 'Profil', navEnglish: 'English', navHome: 'Beranda', navHR: 'HR', navMore: 'Lainnya',
@@ -66,7 +66,7 @@ window.PS_I18N = {
   },
   en: {
     agendaToday: 'Today\u2019s agenda', refresh: 'Refresh', agendaNeedConn: 'Connect first in More → Connection to see your AgendaKu agenda.', agendaTapRefresh: 'Tap refresh to load your agenda.', loading: 'Loading…',
-    agendaNoneToday: 'Nothing on the agenda today. Time to study!', tomorrow: 'Tomorrow', agendaItems: 'items', agendaLater: '+{n} items in the next 7 days', agendaAddHint: 'Add agenda items via the AgendaKu icon on your home screen', updatedAt: 'updated {t}', allDay: 'All day',
+    agendaNoneToday: 'Nothing on the agenda today. Time to study!', tomorrow: 'Tomorrow', agendaItem: 'item', agendaItems: 'items', agendaLater1: '+1 more item in the next 7 days', agendaLater: '+{n} more items in the next 7 days', agendaAddHint: 'Add agenda items via the AgendaKu icon on your home screen', updatedAt: 'updated {t}', allDay: 'All day',
     catWork: 'Work', catFamily: 'Family', catSchool: 'School', catPersonal: 'Personal', catOther: 'Other',
     sendToAgenda: 'Send to AgendaKu', sendToAgendaHint: 'Sent deadlines go into your AgendaKu Sheet and Google Calendar (Personal category).', sentToAgenda: 'Added to AgendaKu & Google Calendar ✓', sentNoCal: 'Added to AgendaKu (Calendar failed, check permissions)', agendaUpdateBackend: 'The backend needs updating to v1.1.0 (see the update guide).',
     navProfile: 'Profile', navEnglish: 'English', navHome: 'Home', navHR: 'HR', navMore: 'More',

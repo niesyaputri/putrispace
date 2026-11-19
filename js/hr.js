@@ -89,7 +89,7 @@
     const g = groupOf(n) || C.HR_GROUPS[0], cs = cardsIn(n);
     return `<div class="page">${PS.back('#hr', esc(TNAME(n)))}
       <section class="card" style="background:${g.bg};border:none;flex-direction:row;align-items:center">${ic('t' + n, '#fff')}<span class="stack grow" style="gap:2px"><b style="color:${g.ink}">${esc(PS.L(g.name))}</b><span class="small" style="color:${g.ink}">${cs.filter((c) => known(c.id)).length}/${cs.length} ${esc(t('understood'))}</span></span>${cs.length >= 4 ? `<a class="btn sm" style="background:${g.ink}" href="#hr/quiz/${n}">${esc(t('quiz'))}</a>` : ''}</section>
-      ${cs.length ? cs.map((c) => `<a class="tile h" href="#hr/card/${c.id}"><span class="ic sm" style="background:${known(c.id) ? '#DDF4EA' : g.bg};font-size:11px;font-weight:800;color:${g.ink}">${known(c.id) ? '✓' : esc(c.no || '•')}</span><span class="stack grow" style="gap:0"><span class="t" style="font-size:14px">${esc(c.title)}</span><span class="s">${esc(c.subtitle || c.chapter || '')}</span></span>${S().hr[c.id] && S().hr[c.id].note ? icon('journal', 18) : ''}</a>`).join('')
+      ${cs.length ? cs.map((c, i) => `${c.chapter && (i === 0 || cs[i - 1].chapter !== c.chapter) ? `<div class="small" style="margin-top:6px;color:${g.ink};font-weight:800">${c.ch ? esc(c.ch) + ' · ' : ''}${esc(c.chapter)}</div>` : ''}<a class="tile h" href="#hr/card/${c.id}"><span class="ic sm" style="background:${known(c.id) ? '#DDF4EA' : g.bg};font-size:11px;font-weight:800;color:${g.ink}">${known(c.id) ? '✓' : esc(c.no || '•')}</span><span class="stack grow" style="gap:0"><span class="t" style="font-size:14px">${esc(c.title)}</span><span class="s">${esc(c.subtitle || c.chapter || '')}</span></span>${S().hr[c.id] && S().hr[c.id].note ? icon('journal', 18) : ''}</a>`).join('')
         : `<div class="empty">${PS.owl(false, 64)}${esc(t('noCardsTopic'))}<button class="btn sm" data-act="importCards">${esc(t('importCards'))}</button></div>`}</div>`;
   }
 
@@ -103,8 +103,9 @@
       <article class="read-mode stack" style="gap:16px;padding:4px 2px">
         ${c.subtitle ? `<div style="font-style:italic;color:#6B6585">${esc(c.subtitle)}</div>` : ''}
         ${sec('#4B3DB0', '📌 Key idea', `<p style="margin:0">${esc(c.key)}</p>`)}
-        ${sec('#9A4A22', '🔑 Key points', (c.points || []).length ? `<ul style="margin:0;padding-left:20px">${c.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : '')}
-        ${sec('#1F6E55', '💡 In practice', c.practice ? `<p style="margin:0">${esc(c.practice)}</p>` : '')}
+        ${sec('#9A4A22', c.tip ? '🧭 When to use it' : '🔑 Key points', (c.points || []).length ? `<ul style="margin:0;padding-left:20px">${c.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : '')}
+        ${sec('#1F6E55', c.tip ? '📖 Real-life example' : '💡 In practice', c.practice ? `<p style="margin:0">${esc(c.practice)}</p>` : '')}
+        ${sec('#6B4E00', '✨ Pro tip', c.tip ? `<p style="margin:0">${esc(c.tip)}</p>` : '')}
         ${sec('#8E3049', '⚖ Critique & limits', c.critique ? `<p style="margin:0">${esc(c.critique)}</p>` : '')}
         ${sec('#2B5C99', '🔤 Key terms', c.terms ? `<p style="margin:0">${esc(c.terms)}</p>` : '')}
         ${c.sources ? `<div class="small">📚 ${esc(c.sources)}${c.page ? ' · ' + esc(c.src || '') + ' p.' + c.page : ''}</div>` : ''}
@@ -115,7 +116,7 @@
   }
   PS.inputs.cardNote = (el) => { hrs(el.dataset.id).note = el.value; clearTimeout(PS._nt); PS._nt = setTimeout(() => PS.save(), 800); };
   A.toggleKnown = (el) => { const st = hrs(el.dataset.id); st.known = !st.known; PS.save(); PS.render(); };
-  A.cardListen = (el) => { const c = S().hrCards.find((x) => x.id === el.dataset.id); if (!c) return; PS.speak([c.title + '.', c.key, ...(c.points || []), c.practice ? 'In practice: ' + c.practice : '', c.critique ? 'Critique: ' + c.critique : ''].filter(Boolean).join(' ')); };
+  A.cardListen = (el) => { const c = S().hrCards.find((x) => x.id === el.dataset.id); if (!c) return; PS.speak([c.title + '.', c.key, ...(c.points || []), c.practice ? 'In practice: ' + c.practice : '', c.critique ? 'Critique: ' + c.critique : '', c.tip ? 'Pro tip: ' + c.tip : ''].filter(Boolean).join(' ')); };
   A.askCard = (el) => PS.sheet(`<div class="row">${PS.owl(false, 40)}<h2 class="h2">${esc(t('askAI'))}</h2></div>
     <div class="row wrap">${['askSimple', 'askOJK', 'askQuiz', 'askFraud'].map((k) => `<button class="chip" data-act="askPreset" data-id="${el.dataset.id}" data-k="${k}">${esc(t(k))}</button>`).join('')}</div>
     <div class="row"><input id="askQ" class="in" data-nofocus="1" placeholder="${esc(t('askPh'))}"><button class="btn sm" data-act="askGo" data-id="${el.dataset.id}">${esc(t('ask'))}</button></div>

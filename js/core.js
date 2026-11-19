@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const C = window.PS_CONTENT;
-  const VERSION = '1.1.1';
+  const VERSION = '1.1.2';
   const KEY = 'putrispace.v1';
   const CONN_KEY = 'putrispace.conn';
   const PS = (window.PS = { VERSION, C, views: {}, acts: {}, inputs: {} });
