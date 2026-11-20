@@ -91,7 +91,7 @@
     const dl = s.deadlines.filter((d) => daysUntil(d.date) >= 0).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
     const cpe = s.cpe, cpePct = Math.min(100, Math.round((cpe.done / cpe.need) * 100));
     return `<div class="page">
-      <div class="top">${PS.owl(done === 3)}
+      <div class="top"><a href="#profile" id="homeAvatar" aria-label="${esc(t('navProfile'))}" style="flex-shrink:0;text-decoration:none">${PS.owl(done === 3)}</a>
         <div class="grow"><div class="eyebrow">${esc(dateStr)}</div><h1 class="h1">${esc(t('hello', { name: s.name }))}</h1></div>
         <a class="iconbtn" href="#more" aria-label="${esc(t('navMore'))}" style="background:#FFF4D6;border:none">${icon('bell')}</a></div>
 
@@ -120,6 +120,30 @@
     </div>`;
   };
 
+  /* ================= Profile photo (stored on this phone) ================= */
+  const PHOTO_KEY = 'profile-photo';
+  PS.applyPhoto = async function () {
+    const src = await PS.img.get(PHOTO_KEY); if (!src) return;
+    const a = document.getElementById('avatarBox'); if (a) a.innerHTML = `<img src="${src}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+    const h = document.getElementById('homeAvatar'); if (h) h.innerHTML = `<img src="${src}" alt="${esc(t('navProfile'))}" style="width:58px;height:58px;border-radius:99px;object-fit:cover;border:3px solid #C9C0F2;display:block">`;
+  };
+  A.pickPhoto = () => document.getElementById('photoFile').click();
+  A.photoChosen = (el) => {
+    const f = el.files[0]; if (!f) return;
+    const url = URL.createObjectURL(f), im = new Image();
+    im.onload = async () => {
+      const size = 360, c = document.createElement('canvas'); c.width = c.height = size;
+      const sq = Math.min(im.width, im.height), sx = (im.width - sq) / 2, sy = (im.height - sq) / 2;
+      c.getContext('2d').drawImage(im, sx, sy, sq, sq, 0, 0, size, size);
+      URL.revokeObjectURL(url);
+      try { await PS.img.put({ [PHOTO_KEY]: c.toDataURL('image/jpeg', 0.85) }); PS.toast(t('photoSaved')); PS.applyPhoto(); }
+      catch (e) { PS.toast(t('imagesFailed')); }
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); PS.toast(t('badFile')); };
+    im.src = url;
+  };
+  V.profile_after = () => PS.applyPhoto();
+
   /* ================= AgendaKu link ================= */
   const CATC = { Work: ['#EEEAFE', '#4B3DB0'], Family: ['#FFE6D9', '#9A4A22'], School: ['#DDF4EA', '#1F6E55'], Personal: ['#FCE4EA', '#8E3049'], Other: ['#EFEDF5', '#5E5878'] };
   const catName = (c) => t('cat' + (CATC[c] ? c : 'Other'));
@@ -145,7 +169,7 @@
     catch (e) { if (force) PS.toast(e.message.indexOf('unknown action') >= 0 ? t('agendaUpdateBackend') : e.message, 4000); }
     agendaLoading = false; const b2 = document.getElementById('agendaCard'); if (b2) b2.innerHTML = agendaHtml();
   };
-  V.home_after = () => PS.loadAgenda(false);
+  V.home_after = () => { PS.loadAgenda(false); PS.applyPhoto(); };
   A.agendaRefresh = () => PS.loadAgenda(true);
   A.sendToAgenda = async (el) => {
     const d = S().deadlines.find((x) => x.id === el.dataset.id); if (!d) return;
@@ -200,7 +224,11 @@
     return `<div class="page" style="padding-top:0">
       <header style="background:#EEEAFE;margin:0 -18px;padding:26px 20px 20px;border-radius:0 0 28px 28px;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative">
         <span style="position:absolute;top:22px;left:30px">${icon('star', 18)}</span><span style="position:absolute;top:64px;right:40px">${icon('spark', 14)}</span>
-        <div style="width:84px;height:84px;border-radius:99px;background:#C9C0F2;border:4px solid #fff;display:flex;align-items:center;justify-content:center;font-family:Fredoka,Nunito,sans-serif;font-size:32px;font-weight:600;color:#4B3DB0">${esc(initials)}</div>
+        <button data-act="pickPhoto" aria-label="${esc(t('changePhoto'))}" style="position:relative;border:none;background:none;padding:0;cursor:pointer">
+          <span id="avatarBox" style="width:92px;height:92px;border-radius:99px;background:#C9C0F2;border:4px solid #fff;display:flex;align-items:center;justify-content:center;font-family:Fredoka,Nunito,sans-serif;font-size:32px;font-weight:600;color:#4B3DB0;overflow:hidden">${esc(initials)}</span>
+          <span style="position:absolute;right:-2px;bottom:2px;width:32px;height:32px;border-radius:99px;background:#6A5ACD;border:3px solid #EEEAFE;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z" fill="#fff"/><circle cx="12" cy="13" r="3.2" fill="#6A5ACD"/></svg></span>
+        </button>
+        <input type="file" id="photoFile" accept="image/*" hidden data-change="photoChosen">
         <h1 class="h1 center" style="font-size:22px">${esc(p.name)}</h1>
         <p class="center" style="margin:0;font-size:13px;font-weight:700;color:#4F4A68">${esc(p.role)}</p>
         <div class="row wrap" style="justify-content:center"><span class="pill" style="background:#FFE6D9;color:#9A4A22">${esc(t('target'))}: ${esc(p.goal)}</span><button class="pill" style="background:#fff;color:#4B3DB0;border:none;cursor:pointer" data-act="editHead">${esc(t('edit'))}</button></div>
@@ -320,6 +348,7 @@
         const obj = JSON.parse(txt);
         if (obj.type === 'putrispace-hr-cards') { PS.importCards(obj); return; }
         if (obj.type === 'putrispace-card-images') { PS.importImages(obj); return; }
+        if (obj.type === 'putrispace-speaking') { PS.importSpeaking(obj); return; }
         if (!obj.profile) throw new Error('bad');
         if (!confirm(t('confirmRestore'))) return;
         const keepPin = S().pinHash; PS.replaceState(obj); PS.S().pinHash = keepPin; PS.save(); PS.render(); PS.toast(t('restored'));

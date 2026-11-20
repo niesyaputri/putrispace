@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const C = window.PS_CONTENT;
-  const VERSION = '1.4.0';
+  const VERSION = '1.6.0';
   const KEY = 'putrispace.v1';
   const CONN_KEY = 'putrispace.conn';
   const PS = (window.PS = { VERSION, C, views: {}, acts: {}, inputs: {} });
@@ -107,6 +107,7 @@
   PS.img = {
     put: async (map) => { const db = await idb(); const ids = Object.keys(map || {}); await new Promise((res, rej) => { const tx = db.transaction('img', 'readwrite'); ids.forEach((id) => tx.objectStore('img').put(map[id], id)); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); return ids.length; },
     get: async (id) => { try { const db = await idb(); return await new Promise((res) => { const q = db.transaction('img').objectStore('img').get(id); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); }); } catch (e) { return null; } },
+    del: async (id) => { try { const db = await idb(); await new Promise((res) => { const tx = db.transaction('img', 'readwrite'); tx.objectStore('img').delete(id); tx.oncomplete = res; tx.onerror = res; }); } catch (e) { /* ignore */ } },
     count: async () => { try { const db = await idb(); return await new Promise((res) => { const q = db.transaction('img').objectStore('img').count(); q.onsuccess = () => res(q.result); q.onerror = () => res(0); }); } catch (e) { return 0; } }
   };
   PS.importImages = async function (obj) {
@@ -279,7 +280,7 @@
     { r: 'hr', icon: 'hr', key: 'navHR' },
     { r: 'more', icon: 'more', key: 'navMore' }
   ];
-  const SECTION = { home: 'home', profile: 'profile', cv: 'profile', deadlines: 'home', english: 'english', ielts: 'english', check: 'english', mistakes: 'english', review: 'english', tenses: 'english', tense: 'english', grammar: 'english', listen: 'english', read: 'english', vset: 'english', stories: 'english', story: 'english', vocab: 'english', journal: 'english', hr: 'hr', more: 'more' };
+  const SECTION = { home: 'home', profile: 'profile', cv: 'profile', deadlines: 'home', english: 'english', ielts: 'english', check: 'english', mistakes: 'english', review: 'english', tenses: 'english', tense: 'english', grammar: 'english', listen: 'english', read: 'english', vset: 'english', wmod: 'english', sbank: 'english', pdf: 'hr', stories: 'english', story: 'english', vocab: 'english', journal: 'english', hr: 'hr', more: 'more' };
   PS.renderNav = function (sec) {
     const nav = document.getElementById('nav');
     nav.innerHTML = NAV.map((n) => {

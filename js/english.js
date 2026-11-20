@@ -73,7 +73,7 @@ TEXT:
       ${(() => { const pr = PS.listenProgress ? PS.listenProgress() : { done: 0, total: 0 }, LD = window.PS_LISTEN || { lessons: [], tests: [] }; return `<a class="tile h" href="#listen" style="background:#E0EEFF;border:none;min-height:76px">${ic('listening', '#fff')}<span class="stack grow" style="gap:2px"><span class="t" style="font-size:15px">${esc(t('libListening'))}</span><span class="s" style="color:#2B5C99">${esc(t('libListeningSub', { n: LD.lessons.length, m: LD.tests.length + LD.lessons.filter((x) => x.practice && x.practice.script).length }))}</span><div class="bar" style="background:#fff;height:6px;margin-top:4px"><i style="width:${pr.total ? Math.round(pr.done / pr.total * 100) : 0}%;background:#6FA4EE"></i></div></span><span class="pill" style="background:#fff;color:#2B5C99">${pr.done}/${pr.total}</span></a>`; })()}
       ${(() => { const pr = PS.readProgress ? PS.readProgress() : { done: 0, total: 0 }; return `<a class="tile h" href="#read" style="background:#DDF4EA;border:none;min-height:76px">${ic('reading', '#fff')}<span class="stack grow" style="gap:2px"><span class="t" style="font-size:15px">${esc(t('libReading'))}</span><span class="s" style="color:#1F6E55">${esc(t('libReadingSub', { n: pr.total }))}</span><div class="bar" style="background:#fff;height:6px;margin-top:4px"><i style="width:${pr.total ? Math.round(pr.done / pr.total * 100) : 0}%;background:#5BBF97"></i></div></span><span class="pill" style="background:#fff;color:#1F6E55">${pr.done}/${pr.total}</span></a>`; })()}
       ${(() => { const pr = PS.vsetProgress ? PS.vsetProgress() : { known: 0, total: 0, sets: 0, lessons: 0 }; return `<a class="tile h" href="#vset" style="background:#FFF4D6;border:none;min-height:76px">${ic('vocab', '#fff')}<span class="stack grow" style="gap:2px"><span class="t" style="font-size:15px">${esc(t('libVocab'))}</span><span class="s" style="color:#6B4E00">${esc(t('libVocabSub', { s: pr.sets, l: pr.lessons }))}</span><div class="bar" style="background:#fff;height:6px;margin-top:4px"><i style="width:${pr.total ? Math.round(pr.known / pr.total * 100) : 0}%;background:#F2C14E"></i></div></span><span class="pill" style="background:#fff;color:#6B4E00">${pr.known}/${pr.total}</span></a>`; })()}
-      <section class="grid2">${[['speaking', '#FCE4EA', 'libSpeaking'], ['writing', '#FFE6D9', 'libWriting']].map(([i, bg, k]) => `<div class="tile h" style="opacity:.8">${ic(i, bg, 'sm')}<span class="stack" style="gap:0"><span class="t" style="font-size:13px">${esc(t(k))}</span><span class="pill" style="background:#F3F0FF;color:#6B6585;align-self:flex-start;margin-top:2px">${esc(t('soon'))}</span></span></div>`).join('')}</section>
+      <section class="grid2">${(() => { const sp = PS.sbankProgress && PS.sbankProgress(), wp = PS.wmodProgress ? PS.wmodProgress() : { done: 0, total: 0 }; return `<a class="tile" href="#sbank" style="background:#FCE4EA;border:none">${ic('speaking', '#fff', 'sm')}<span class="t" style="font-size:14px">${esc(t('libSpeaking'))}</span><span class="s" style="color:#8E3049">${sp ? sp.done + '/' + sp.total + ' · ' + esc(t('practised')) : esc(t('sbTileSub'))}</span></a><a class="tile" href="#wmod" style="background:#FFE6D9;border:none">${ic('writing', '#fff', 'sm')}<span class="t" style="font-size:14px">${esc(t('libWriting'))}</span><span class="s" style="color:#9A4A22">${wp.done}/${wp.total} · Task 1 + 2</span></a>`; })()}</section>
       <div class="row" style="margin-top:4px"><span class="pill" style="background:#6A5ACD;color:#fff">2</span><h2 class="h2">IELTS · ${esc(t('aiPracticeTitle'))}</h2></div>
       <section class="grid2">${['L', 'R', 'W', 'S'].map(skill).join('')}</section>
       <div class="tile h" style="background:#2E2A45;color:#fff;border:none">${ic('clock', 'rgba(255,255,255,.12)')}<span class="stack grow" style="gap:0"><span class="t">${esc(t('mockTest'))}</span><span class="s" style="color:#DAD5F2">${esc(t('mockTestSub'))}</span></span><span class="pill" style="background:#FFE7C2;color:#6B4E00">${esc(t('soon'))}</span></div>
@@ -145,6 +145,23 @@ TEXT:
       ${r.model_paragraph ? `<div class="drill" style="background:#E0EEFF;color:#1F4778"><b style="font-size:12px">${esc(t('modelParagraph'))}</b><span style="font-size:14px;line-height:1.55">${esc(r.model_paragraph)}</span></div>` : ''}
       <span class="small">${esc(t('aiDisclaimer'))}</span></section>`;
   }
+  PS.writingResult = (w) => writingResult(w);
+  PS.gradeWriting = async (task, prompt, essay, ref) => {
+    const words = essay ? essay.split(/\s+/).length : 0, crit = task === 't1' ? 'TA, CC, LR, GRA' : 'TR, CC, LR, GRA';
+    const r = await PS.ai({ feature: 'writing', max: 3000, system: coach(), prompt:
+`Assess this IELTS Academic Writing ${task === 't1' ? 'Task 1' : 'Task 2'} answer using the official public band descriptors. Be honest and calibrated (do not inflate).
+QUESTION: ${prompt}${ref ? '\nREFERENCE (from the study book, for the examiner only — use it to check data accuracy, do not require the same wording): ' + ref : ''}
+ANSWER (${words} words): """${essay}"""
+Return JSON: {"band": overall band like 6.5, "criteria": {${crit.split(', ').map((c) => `"${c}": {"band": number, "comment": "1-2 sentences"}`).join(', ')}},
+"strengths": [max 3 short points], "improve": [max 4 specific, actionable points],
+"errors": [max 6 {"original": exact sentence from the answer, "corrected": corrected sentence, "category": one of ${JSON.stringify(CATS)}, "pattern": short pattern name, "explanation": short why}],
+"model_paragraph": "rewrite ONE weak paragraph of the answer at band 7.5+ level"}` });
+    const w = { id: PS.uid(), date: dayKey(), task, prompt, essay, words, band: r.band, result: r };
+    S().writings.unshift(w);
+    (r.errors || []).forEach((e) => PS.addMistake(Object.assign(resultFromAI(e, 'writing'), {})));
+    PS.mark('ieltsW'); PS.save();
+    return w;
+  };
   A.scoreWriting = async (el) => {
     const essay = document.getElementById('essay').value.trim(); const words = essay ? essay.split(/\s+/).length : 0;
     if (words < 40) { PS.toast(t('tooShort')); return; }
@@ -152,19 +169,8 @@ TEXT:
     const prompt = st.wCustom || (task === 't1' ? item.prompt + '\nDATA: ' + JSON.stringify(item.table) : item);
     const out = document.getElementById('wResult'); el.disabled = true; out.innerHTML = PS.loading(t('scoring'));
     try {
-      const crit = task === 't1' ? 'TA, CC, LR, GRA' : 'TR, CC, LR, GRA';
-      const r = await PS.ai({ feature: 'writing', max: 3000, system: coach(), prompt:
-`Assess this IELTS Academic Writing ${task === 't1' ? 'Task 1' : 'Task 2'} answer using the official public band descriptors. Be honest and calibrated (do not inflate).
-QUESTION: ${prompt}
-ANSWER (${words} words): """${essay}"""
-Return JSON: {"band": overall band like 6.5, "criteria": {${crit.split(', ').map((c) => `"${c}": {"band": number, "comment": "1-2 sentences"}`).join(', ')}},
-"strengths": [max 3 short points], "improve": [max 4 specific, actionable points],
-"errors": [max 6 {"original": exact sentence from the answer, "corrected": corrected sentence, "category": one of ${JSON.stringify(CATS)}, "pattern": short pattern name, "explanation": short why}],
-"model_paragraph": "rewrite ONE weak paragraph of the answer at band 7.5+ level"}` });
-      const w = { id: PS.uid(), date: dayKey(), task, prompt: st.wCustom || (task === 't1' ? item.prompt : item), essay, words, band: r.band, result: r };
-      S().writings.unshift(w);
-      (r.errors || []).forEach((e) => PS.addMistake(Object.assign(resultFromAI(e, 'writing'), {})));
-      PS.mark('ieltsW'); st.draft = ''; PS.save();
+      const w = await PS.gradeWriting(task, prompt, essay);
+      w.prompt = st.wCustom || (task === 't1' ? item.prompt : item); st.draft = ''; PS.save();
       out.innerHTML = writingResult(w);
     } catch (e) { out.innerHTML = `<div class="card">⚠ ${esc(e.message)}</div>`; }
     el.disabled = false;
@@ -200,23 +206,27 @@ Return JSON: {"band": overall band like 6.5, "criteria": {${crit.split(', ').map
       ${errorsBlock(r.errors)}
       ${(r.useful_phrases || []).length ? `<div><b style="font-size:13px;color:#1F6E55">${esc(t('usefulPhrases'))}</b><div class="row wrap" style="margin-top:6px">${r.useful_phrases.map((x) => `<button class="chip" data-act="say" data-text="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>` : ''}
       ${r.better_answer ? `<div class="drill" style="background:#E0EEFF;color:#1F4778"><div class="between"><b style="font-size:12px">${esc(t('betterAnswer'))}</b><button class="btn sm soft" data-act="say" data-text="${esc(r.better_answer)}">${icon('speaker', 18)}${esc(t('listen'))}</button></div><span style="font-size:14px;line-height:1.55">${esc(r.better_answer)}</span></div>` : ''}</section>`; };
-  A.scoreSpeaking = async (el) => {
-    const ans = document.getElementById('spk').value.trim();
-    if (ans.split(/\s+/).length < 12) { PS.toast(t('tooShort')); return; }
-    const part = st.sPart, q = C.SPEAKING[part][st.sIdx % C.SPEAKING[part].length], qText = part === 'p2' ? q.topic + ' (You should say: ' + q.points.join('; ') + ')' : q;
-    const out = document.getElementById('sResult'); el.disabled = true; out.innerHTML = PS.loading(t('scoring'));
-    try {
-      const r = await PS.ai({ feature: 'speaking', max: 2400, system: coach(), prompt:
+  PS.speakResult = (w) => speakResult(w);
+  PS.gradeSpeaking = async (part, qText, ans, qShort) => {
+    const r = await PS.ai({ feature: 'speaking', max: 2400, system: coach(), prompt:
 `This is a transcript (from speech-to-text) of an IELTS Speaking ${part.toUpperCase()} answer. Ignore missing punctuation caused by dictation. Pronunciation cannot be judged from text, so do not score it.
 QUESTION: ${qText}
 TRANSCRIPT: """${ans}"""
 Return JSON: {"band": estimated band (FC, LR, GRA only), "criteria": {"FC": {"band":n,"comment":""}, "LR": {"band":n,"comment":""}, "GRA": {"band":n,"comment":""}},
 "comment": "2-3 sentence overall advice", "errors": [max 5 {"original","corrected","category" one of ${JSON.stringify(CATS)},"pattern","explanation"}],
 "useful_phrases": [4-6 natural phrases she could use for this question], "better_answer": "a natural band 7.5 answer of similar length, in first person, keeping her ideas"}` });
-      const w = { id: PS.uid(), date: dayKey(), part, q: part === 'p2' ? q.topic : q, answer: ans, band: r.band, result: r };
-      S().speakings.unshift(w); (r.errors || []).forEach((e) => PS.addMistake(resultFromAI(e, 'speaking')));
-      PS.mark('ieltsS'); PS.save(); out.innerHTML = speakResult(w);
-    } catch (e) { out.innerHTML = `<div class="card">⚠ ${esc(e.message)}</div>`; }
+    const w = { id: PS.uid(), date: dayKey(), part, q: qShort || qText, answer: ans, band: r.band, result: r };
+    S().speakings.unshift(w); (r.errors || []).forEach((e) => PS.addMistake(resultFromAI(e, 'speaking')));
+    PS.mark('ieltsS'); PS.save();
+    return w;
+  };
+  A.scoreSpeaking = async (el) => {
+    const ans = document.getElementById('spk').value.trim();
+    if (ans.split(/\s+/).length < 12) { PS.toast(t('tooShort')); return; }
+    const part = st.sPart, q = C.SPEAKING[part][st.sIdx % C.SPEAKING[part].length], qText = part === 'p2' ? q.topic + ' (You should say: ' + q.points.join('; ') + ')' : q;
+    const out = document.getElementById('sResult'); el.disabled = true; out.innerHTML = PS.loading(t('scoring'));
+    try { const w = await PS.gradeSpeaking(part, qText, ans, part === 'p2' ? q.topic : q); out.innerHTML = speakResult(w); }
+    catch (e) { out.innerHTML = `<div class="card">⚠ ${esc(e.message)}</div>`; }
     el.disabled = false;
   };
   A.showSpeaking = (el) => { const w = S().speakings.find((x) => x.id === el.dataset.id); if (w) PS.sheet(`<h2 class="h2">${esc(w.q)}</h2><div style="font-size:14px;background:#FAF7FF;border-radius:14px;padding:12px">${esc(w.answer)}</div>${speakResult(w)}`); };
